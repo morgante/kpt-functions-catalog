@@ -58,6 +58,11 @@ func Processor(rl *sdk.ResourceList) error {
 		return err
 	}
 
+	data, err = formatTerraformConfig(data)
+	if err != nil {
+		return err
+	}
+
 	configMap := makeConfigMap(data)
 
 	return rl.UpsertObjectToItems(configMap, nil, false)

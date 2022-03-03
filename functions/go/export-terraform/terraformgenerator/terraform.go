@@ -15,9 +15,42 @@
 package terraformgenerator
 
 import (
+	"context"
+	"fmt"
 	"strings"
 	"text/template"
+
+	"github.com/hashicorp/go-version"
+	"github.com/hashicorp/hc-install/product"
+	"github.com/hashicorp/hc-install/releases"
+	"github.com/hashicorp/terraform-exec/tfexec"
+	"github.com/pkg/errors"
 )
+
+func formatTerraformConfig(files map[string]string) (map[string]string, error) {
+	installer := &releases.ExactVersion{
+		Product: product.Terraform,
+		Version: version.Must(version.NewVersion("1.0.6")),
+	}
+
+	ctx := context.Background()
+
+	execPath, err := installer.Install(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error installing Terraform")
+	}
+
+	formattedFiles := make(map[string]string)
+	for name, content := range files {
+		fmt.Printf("format %s: %s", name, content)
+		formatted, err := tfexec.FormatString(ctx, execPath, content)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error formatting %s", name)
+		}
+		formattedFiles[name] = formatted
+	}
+	return formattedFiles, nil
+}
 
 func (rs *terraformResources) getHCL() (map[string]string, error) {
 	tmpl, err := template.New("").ParseFS(templates, "templates/*")

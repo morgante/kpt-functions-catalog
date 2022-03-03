@@ -5,16 +5,16 @@ module "organization-iam" {
   organizations = ["11111111111"]
 
   bindings = {
-    
+
     "roles/editor" = [
       "group:gcp-organization-admins@example.com",
       "group:gcp-developers@example.com",
     ]
-    
+
     "roles/orgpolicy.policyAdmin" = [
       "group:gcp-organization-admins@example.com",
     ]
-    
+
   }
 }
 
@@ -26,11 +26,11 @@ module "folder-1-iam" {
   folders = ["folders/335620346181"]
 
   bindings = {
-    
+
     "roles/viewer" = [
       "group:gcp-developers@example.com",
     ]
-    
+
   }
 }
 
@@ -42,10 +42,10 @@ module "test-iam" {
   folders = [google_folder.test.name]
 
   bindings = {
-    
+
     "roles/viewer" = [
       "group:gcp-developers@example.com",
     ]
-    
+
   }
 }
